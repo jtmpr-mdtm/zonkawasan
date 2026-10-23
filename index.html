@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Peta & Infografik Zon MDTM</title>
+
+  <!-- Font Google Premium -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- PUSTAKA LEAFLET MAPS (CSS & JS) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Fail CSS Utama -->
+  <link rel="stylesheet" href="style.css?v=2026">
+</head>
+<body>
+
+  <!-- TOP BAR (HEADER) -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <img
+            src="images/logo.jpeg"
+            alt="Logo MDTM"
+            class="header-logo-img"
+            onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/ms/5/5e/Logo_Majlis_Daerah_Tanjong_Malim.png';"
+          >
+        </div>
+        <div class="brand-info">
+          <h1>MDTM Peta & Zon Kawalan</h1>
+          <p>Majlis Daerah Tanjong Malim • Panduan Ahli Majlis & Penyelaras</p>
+        </div>
+      </div>
+
+      <!-- Butang Tindakan Atas -->
+     
+    </div>
+  </header>
+
+  <!-- DASHBOARD WRAPPER -->
+  <main class="dashboard-container" id="dashboardContainer">
+
+    <!-- LAJUR KIRI: CARIAN & SENARAI ZON -->
+    <section class="panel-left">
+      <div class="panel-header">
+        <h2>Pilihan Zon</h2>
+        <p class="panel-subtitle">Pilih zon atau cari nama taman / jalan.</p>
+      </div>
+
+      <!-- INPUT CARIAN -->
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="zoneSearch"
+          class="search-field"
+          placeholder="Cari zon, taman, jalan atau pegawai..."
+        >
+      </div>
+
+      <!-- TAB PENAPIS (A, B, C SAHAJA - TERUS KE ZON A) -->
+      <div class="filter-tabs">
+        <button class="tab-btn active" data-filter="A" type="button">Zon A</button>
+        <button class="tab-btn" data-filter="B" type="button">Zon B</button>
+        <button class="tab-btn" data-filter="C" type="button">Zon C</button>
+      </div>
+
+      <!-- SENARAI KAD ZON -->
+      <div class="zone-list" id="zoneListContainer"></div>
+    </section>
+
+    <!-- LAJUR TENGAH: POSTER & MAKLUMAT ZON (DISEMBUNYIKAN PADA PERMULAAN) -->
+    <section class="panel-middle" id="panelMiddle">
+      <div class="poster-card">
+        <div class="poster-header">
+          <div>
+            <span class="badge" id="displayZoneBadge">INFO KAWALAN</span>
+            <h2 class="zone-poster-title" id="displayZoneTitle">Infografik Kawasan</h2>
+          </div>
+          <div class="poster-header-actions">
+            <button class="btn-action-view" id="btnZoomPoster" type="button" style="display: none;">
+              🔍 Lihat Penuh
+            </button>
+            <button class="btn-close-panel" id="btnCloseMiddle" type="button" title="Tutup panel maklumat">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- KANDUNGAN POSTER & DETAIL (SCROLLABLE) -->
+        <div class="middle-scroll-content">
+          <!-- RUANG GAMBAR INFOGRAFIK -->
+          <div class="poster-display-area" id="posterArea">
+            <img
+              id="displayPoster"
+              class="main-poster-img"
+              src=""
+              alt="Poster Infografik Zon"
+              title="Klik untuk besarkan imej"
+            >
+          </div>
+
+          <!-- MAKLUMAT DETAIL PEGAWAI & KAWASAN -->
+          <div class="zone-info-details-box" id="infoDetailsBox">
+
+            <!-- Kad Ahli Majlis -->
+            <div class="info-tile">
+              <div class="tile-icon">👤</div>
+              <div class="tile-body">
+                <label>Ahli Majlis Bertanggungjawab</label>
+                <strong id="displayOfficer">-</strong>
+              </div>
+            </div>
+
+            <!-- Kad Pegawai Penyelaras -->
+            <div class="info-tile">
+              <div class="tile-icon">📋</div>
+              <div class="tile-body">
+                <label>Pegawai Penyelaras MDTM</label>
+                <strong id="displayCoordinator">-</strong>
+              </div>
+            </div>
+
+            <!-- Senarai Kawasan Liputan Bertulis (Klik untuk zum ke marker kawasan) -->
+            <div class="details-kawasan-section">
+              <h3 class="kawasan-section-title" id="kawasanHeaderTitle">Kawasan Liputan</h3>
+              <div class="kawasan-grid" id="kawasanContainer"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAJUR KANAN: PETA INTERAKTIF LEAFLET -->
+    <section class="panel-right">
+      <div class="map-card">
+        <!-- BEKAS PETA LEAFLET -->
+        <div id="mapView"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LIGHTBOX MODAL (ZOOM POSTER) -->
+  <div id="imageModal" class="image-modal">
+    <span class="modal-close" id="modalClose">&times;</span>
+    <img class="modal-img" id="modalImg" alt="Paparan Penuh Poster">
+    <div class="modal-caption" id="modalCaption"></div>
+  </div>
+
+  <!-- Fail JS Utama -->
+  
+  <script src="app.js?v=2026"></script>
+
+</body>
+</html>
